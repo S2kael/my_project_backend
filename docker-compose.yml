@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  db:
+    image: "postgres:11"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=fulfill000
+      - POSTGRES_DB=fulfillment-hub
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    networks:
+      - ffh-net
+
+  rabbit:
+    image: "rabbitmq:3-management"
+    hostname: "rabbit"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "15671:15671"
+    labels:
+      NAME: "rabbitmq"
+    volumes:
+      - ./rabbit:/var/lib/rabbitmq
+    networks:
+      - ffh-net
+
+  web:
+    build: "."
+    volumes:
+      - "./app"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - "db"
+      - "rabbit"
+    networks:
+      - ffh-net
+
+
+
+networks:
+  ffh-net:
+    driver: bridge
