@@ -12,7 +12,7 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     networks:
-      - ffh-net
+      - app-net
 
   rabbit:
     image: "rabbitmq:3-management"
@@ -31,22 +31,22 @@ services:
     volumes:
       - ./rabbit:/var/lib/rabbitmq
     networks:
-      - ffh-net
+      - app-net
 
   web:
     build: "."
     volumes:
-      - "./app"
+      - ".:/app"
     ports:
       - "8000:8000"
     depends_on:
       - "db"
       - "rabbit"
     networks:
-      - ffh-net
+      - app-net
 
 
 
 networks:
-  ffh-net:
+  app-net:
     driver: bridge
