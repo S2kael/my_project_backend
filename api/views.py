@@ -7,11 +7,11 @@ from rest_framework.views import Response
 import pika
 import json
 
-from .models import PendingStore, Store, Product
+from .models import PendingStore, Store, Product, Tag
 from django.core import serializers
 
 # Create your views here.
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer, StoreSerializer, PendingStoreSerializer, TagSerializer
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -23,6 +23,45 @@ class ProductViewSet(viewsets.ModelViewSet):
         search = request_data.get("q")
         if search:
             self.queryset = Product.objects.filter(name__contains=search)
+
+        return super().list(request, *args, **kwargs)
+
+
+class StoreViewSet(viewsets.ModelViewSet):
+    queryset = Store.objects.all()
+    serializer_class = StoreSerializer
+
+    def list(self, request, *args, **kwargs):
+        request_data = request.query_params
+        search = request_data.get("q")
+        if search:
+            self.queryset = Store.objects.filter(name__contains=search)
+
+        return super().list(request, *args, **kwargs)
+
+
+class PendingStoreViewSet(viewsets.ModelViewSet):
+    queryset = PendingStore.objects.all()
+    serializer_class = PendingStoreSerializer
+
+    def list(self, request, *args, **kwargs):
+        request_data = request.query_params
+        search = request_data.get("q")
+        if search:
+            self.queryset = PendingStore.objects.filter(name__contains=search)
+
+        return super().list(request, *args, **kwargs)
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+    def list(self, request, *args, **kwargs):
+        request_data = request.query_params
+        search = request_data.get("q")
+        if search:
+            self.queryset = Tag.objects.filter(name__contains=search)
 
         return super().list(request, *args, **kwargs)
 
